@@ -38,7 +38,7 @@ output "aws_kinesis_firehose_delivery_stream" {
   description = "AWS Kinesis firehose delivery stream to send logs to Sumo Logic."
 }
 
-output "aws_serverlessapplicationrepository_cloudformation_stack" {
-  value       = local.auto_enable_logs_subscription ? aws_serverlessapplicationrepository_cloudformation_stack.auto_enable_logs_subscription : {}
-  description = "AWS CloudFormation stack for Auto Enable logs subscription."
-}
+# output "aws_serverlessapplicationrepository_cloudformation_stack" {
+#   value       = local.auto_enable_logs_subscription ? aws_serverlessapplicationrepository_cloudformation_stack.auto_enable_logs_subscription : {}
+#   description = "AWS CloudFormation stack for Auto Enable logs subscription."
+# }
