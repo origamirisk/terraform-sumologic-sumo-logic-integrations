@@ -140,24 +140,24 @@ resource "aws_sns_topic_subscription" "subscription" {
 
 # Reason to use the SAM app, is to have single source of truth for Auto Enable access logs functionality.
 # Ignore changes has been implemented to bypass aws resource issue: https://github.com/hashicorp/terraform-provider-aws/issues/16485
-resource "aws_serverlessapplicationrepository_cloudformation_stack" "auto_enable_access_logs" {
-  for_each = toset(local.auto_enable_access_logs ? ["auto_enable_access_logs"] : [])
+# resource "aws_serverlessapplicationrepository_cloudformation_stack" "auto_enable_access_logs" {
+#   for_each = toset(local.auto_enable_access_logs ? ["auto_enable_access_logs"] : [])
 
-  name             = "Auto-Enable-Access-Logs-Elb-${random_string.aws_random.id}"
-  application_id   = "arn:aws:serverlessrepo:us-east-1:956882708938:applications/sumologic-s3-logging-auto-enable"
-  semantic_version = var.app_semantic_version
-  capabilities     = data.aws_serverlessapplicationrepository_application.app.required_capabilities
-  parameters = {
-    BucketName                = local.bucket_name
-    BucketPrefix              = "elasticloadbalancing"
-    AutoEnableLogging         = "ALB"
-    AutoEnableResourceOptions = var.auto_enable_access_logs
-    FilterExpression          = var.auto_enable_access_logs_options.filter
-    RemoveOnDeleteStack       = var.auto_enable_access_logs_options.remove_on_delete_stack
-  }
-  lifecycle {
-    ignore_changes = [
-      parameters,tags
-    ]
-  }
-}
+#   name             = "Auto-Enable-Access-Logs-Elb-${random_string.aws_random.id}"
+#   application_id   = "arn:aws:serverlessrepo:us-east-1:956882708938:applications/sumologic-s3-logging-auto-enable"
+#   semantic_version = var.app_semantic_version
+#   capabilities     = data.aws_serverlessapplicationrepository_application.app.required_capabilities
+#   parameters = {
+#     BucketName                = local.bucket_name
+#     BucketPrefix              = "elasticloadbalancing"
+#     AutoEnableLogging         = "ALB"
+#     AutoEnableResourceOptions = var.auto_enable_access_logs
+#     FilterExpression          = var.auto_enable_access_logs_options.filter
+#     RemoveOnDeleteStack       = var.auto_enable_access_logs_options.remove_on_delete_stack
+#   }
+#   lifecycle {
+#     ignore_changes = [
+#       parameters,tags
+#     ]
+#   }
+# }

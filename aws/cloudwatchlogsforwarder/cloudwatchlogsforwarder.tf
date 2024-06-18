@@ -135,7 +135,7 @@ resource "aws_lambda_permission" "process_dead_letter_queue_lambda_permission" {
 resource "aws_cloudwatch_event_rule" "process_dead_letter_queue_event_rule" {
   description         = "Events rule for Cron"
   schedule_expression = "rate(5 minutes)"
-  state          = "ENABLED"
+  state               = "ENABLED"
 }
 
 resource "aws_cloudwatch_event_target" "process_dead_letter_queue_event_rule_target" {
@@ -185,17 +185,17 @@ resource "sumologic_http_source" "source" {
 }
 
 # Reason to use the SAM app, is to have single source of truth for Auto Subscribe functionality.
-resource "aws_serverlessapplicationrepository_cloudformation_stack" "auto_enable_logs_subscription" {
-  for_each = toset(local.auto_enable_logs_subscription ? ["auto_enable_logs_subscription"] : [])
+# resource "aws_serverlessapplicationrepository_cloudformation_stack" "auto_enable_logs_subscription" {
+#   for_each = toset(local.auto_enable_logs_subscription ? ["auto_enable_logs_subscription"] : [])
 
-  name             = "Auto-Enable-Logs-Subscription-${random_string.aws_random.id}"
-  application_id   = "arn:aws:serverlessrepo:us-east-1:956882708938:applications/sumologic-loggroup-connector"
-  semantic_version = var.app_semantic_version
-  capabilities     = data.aws_serverlessapplicationrepository_application.app.required_capabilities
-  parameters = {
-    DestinationArnType  = "Lambda"
-    DestinationArnValue = aws_lambda_function.logs_lambda_function.arn
-    LogGroupPattern     = var.auto_enable_logs_subscription_options.filter
-    UseExistingLogs     = local.auto_enable_existing
-  }
-}
+#   name             = "Auto-Enable-Logs-Subscription-${random_string.aws_random.id}"
+#   application_id   = "arn:aws:serverlessrepo:us-east-1:956882708938:applications/sumologic-loggroup-connector"
+#   semantic_version = var.app_semantic_version
+#   capabilities     = data.aws_serverlessapplicationrepository_application.app.required_capabilities
+#   parameters = {
+#     DestinationArnType  = "Lambda"
+#     DestinationArnValue = aws_lambda_function.logs_lambda_function.arn
+#     LogGroupPattern     = var.auto_enable_logs_subscription_options.filter
+#     UseExistingLogs     = local.auto_enable_existing
+#   }
+# }

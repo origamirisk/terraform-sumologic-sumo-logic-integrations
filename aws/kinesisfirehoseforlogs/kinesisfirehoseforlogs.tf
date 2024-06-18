@@ -124,16 +124,16 @@ resource "aws_kinesis_firehose_delivery_stream" "logs_delivery_stream" {
     }
 
     s3_configuration {
-    role_arn           = aws_iam_role.firehose_role.arn
-    bucket_arn         = "arn:${local.arn_map[local.aws_region]}:s3:::${local.bucket_name}"
-    compression_format = "UNCOMPRESSED"
-    //error_output_prefix = "SumoLogic-Kinesis-Failed-Logs/"
-    cloudwatch_logging_options {
-      enabled         = true
-      log_group_name  = aws_cloudwatch_log_group.log_group.name
-      log_stream_name = aws_cloudwatch_log_stream.s3_log_stream.name
+      role_arn           = aws_iam_role.firehose_role.arn
+      bucket_arn         = "arn:${local.arn_map[local.aws_region]}:s3:::${local.bucket_name}"
+      compression_format = "UNCOMPRESSED"
+      //error_output_prefix = "SumoLogic-Kinesis-Failed-Logs/"
+      cloudwatch_logging_options {
+        enabled         = true
+        log_group_name  = aws_cloudwatch_log_group.log_group.name
+        log_stream_name = aws_cloudwatch_log_stream.s3_log_stream.name
+      }
     }
-  }
 
     request_configuration {
       content_encoding = "GZIP"
@@ -167,18 +167,18 @@ resource "sumologic_http_source" "source" {
 }
 
 # Reason to use the SAM app, is to have single source of truth for Auto Subscribe functionality.
-resource "aws_serverlessapplicationrepository_cloudformation_stack" "auto_enable_logs_subscription" {
-  for_each = toset(local.auto_enable_logs_subscription ? ["auto_enable_logs_subscription"] : [])
+# resource "aws_serverlessapplicationrepository_cloudformation_stack" "auto_enable_logs_subscription" {
+#   for_each = toset(local.auto_enable_logs_subscription ? ["auto_enable_logs_subscription"] : [])
 
-  name             = "Auto-Enable-Logs-Subscription-${random_string.aws_random.id}"
-  application_id   = "arn:aws:serverlessrepo:us-east-1:956882708938:applications/sumologic-loggroup-connector"
-  semantic_version = var.app_semantic_version
-  capabilities     = data.aws_serverlessapplicationrepository_application.app.required_capabilities
-  parameters = {
-    DestinationArnType  = "Kinesis"
-    DestinationArnValue = aws_kinesis_firehose_delivery_stream.logs_delivery_stream.arn
-    LogGroupPattern     = var.auto_enable_logs_subscription_options.filter
-    UseExistingLogs     = local.auto_enable_existing
-    RoleArn             = aws_iam_role.logs_role.arn
-  }
-}
+#   name             = "Auto-Enable-Logs-Subscription-${random_string.aws_random.id}"
+#   application_id   = "arn:aws:serverlessrepo:us-east-1:956882708938:applications/sumologic-loggroup-connector"
+#   semantic_version = var.app_semantic_version
+#   capabilities     = data.aws_serverlessapplicationrepository_application.app.required_capabilities
+#   parameters = {
+#     DestinationArnType  = "Kinesis"
+#     DestinationArnValue = aws_kinesis_firehose_delivery_stream.logs_delivery_stream.arn
+#     LogGroupPattern     = var.auto_enable_logs_subscription_options.filter
+#     UseExistingLogs     = local.auto_enable_existing
+#     RoleArn             = aws_iam_role.logs_role.arn
+#   }
+# }
