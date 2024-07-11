@@ -92,7 +92,7 @@ variable "sumologic_organization_id" {
 variable "app_semantic_version" {
   type        = string
   description = "Provide the latest version of Serverless Application Repository 'sumologic-s3-logging-auto-enable'."
-  default = "1.0.5"
+  default     = "1.0.5"
 }
 
 variable "auto_enable_access_logs" {
@@ -139,4 +139,23 @@ variable "wait_for_seconds" {
         If the AWS IAM role is created outside the module, the value can be decreased to 1 second.
     EOT
   default     = 180
+}
+
+variable "use_iam_user_auth" {
+  type        = bool
+  description = "Provide \"true\" if you would like to use IAM user authentication for Sumo Logic source. When true, the iam_user_access_key and iam_user_secret_key vars must be provided."
+  default     = false
+}
+
+variable "iam_user_access_key" {
+  type        = string
+  description = "Access key of the IAM user."
+  default     = null
+}
+
+variable "iam_user_secret_key" {
+  type        = string
+  description = "Secret key of the IAM user."
+  default     = null
+  sensitive   = true
 }

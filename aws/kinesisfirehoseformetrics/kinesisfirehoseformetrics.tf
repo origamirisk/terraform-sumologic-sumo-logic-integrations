@@ -126,16 +126,16 @@ resource "aws_kinesis_firehose_delivery_stream" "metrics_delivery_stream" {
     }
 
     s3_configuration {
-    role_arn           = aws_iam_role.firehose_role.arn
-    bucket_arn         = "arn:${local.arn_map[local.aws_region]}:s3:::${local.bucket_name}"
-    compression_format = "UNCOMPRESSED"
-    //error_output_prefix = "SumoLogic-Kinesis-Failed-Metrics/"
-    cloudwatch_logging_options {
-      enabled         = true
-      log_group_name  = aws_cloudwatch_log_group.log_group.name
-      log_stream_name = aws_cloudwatch_log_stream.s3_log_stream.name
+      role_arn           = aws_iam_role.firehose_role.arn
+      bucket_arn         = "arn:${local.arn_map[local.aws_region]}:s3:::${local.bucket_name}"
+      compression_format = "UNCOMPRESSED"
+      //error_output_prefix = "SumoLogic-Kinesis-Failed-Metrics/"
+      cloudwatch_logging_options {
+        enabled         = true
+        log_group_name  = aws_cloudwatch_log_group.log_group.name
+        log_stream_name = aws_cloudwatch_log_stream.s3_log_stream.name
+      }
     }
-  }
   }
 }
 
@@ -198,9 +198,21 @@ resource "sumologic_kinesis_metrics_source" "source" {
   fields       = var.source_details.fields
   name         = var.source_details.source_name
 
-  authentication {
-    type     = "AWSRoleBasedAuthentication"
-    role_arn = var.source_details.iam_details.create_iam_role ? aws_iam_role.source_iam_role["source_iam_role"].arn : var.source_details.iam_details.iam_role_arn
+  dynamic "authentication" {
+    for_each = var.use_iam_user_auth ? [1] : []
+    content {
+      type       = "S3BucketAuthentication"
+      access_key = var.iam_user_access_key
+      secret_key = var.iam_user_secret_key
+    }
+  }
+
+  dynamic "authentication" {
+    for_each = var.use_iam_user_auth ? [] : [1]
+    content {
+      type     = "AWSRoleBasedAuthentication"
+      role_arn = var.source_details.iam_details.create_iam_role ? aws_iam_role.source_iam_role["source_iam_role"].arn : var.source_details.iam_details.iam_role_arn
+    }
   }
 
   path {

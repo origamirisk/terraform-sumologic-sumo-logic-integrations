@@ -82,9 +82,21 @@ resource "sumologic_aws_xray_source" "aws_xray_source" {
   collector_id  = var.create_collector ? sumologic_collector.collector["collector"].id : var.xray_source_details.collector_id
   fields        = var.xray_source_details.fields
 
-  authentication {
-    type     = "AWSRoleBasedAuthentication"
-    role_arn = var.iam_details.create_iam_role ? aws_iam_role.source_iam_role["source_iam_role"].arn : var.iam_details.iam_role_arn
+  dynamic "authentication" {
+    for_each = var.use_iam_user_auth ? [1] : []
+    content {
+      type       = "S3BucketAuthentication"
+      access_key = var.iam_user_access_key
+      secret_key = var.iam_user_secret_key
+    }
+  }
+
+  dynamic "authentication" {
+    for_each = var.use_iam_user_auth ? [] : [1]
+    content {
+      type     = "AWSRoleBasedAuthentication"
+      role_arn = var.iam_details.create_iam_role ? aws_iam_role.source_iam_role["source_iam_role"].arn : var.iam_details.iam_role_arn
+    }
   }
 
   path {

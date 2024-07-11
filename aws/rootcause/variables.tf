@@ -112,3 +112,22 @@ variable "wait_for_seconds" {
     EOT
   default     = 180
 }
+
+variable "use_iam_user_auth" {
+  type        = bool
+  description = "Provide \"true\" if you would like to use IAM user authentication for Sumo Logic source. When true, the iam_user_access_key and iam_user_secret_key vars must be provided."
+  default     = false
+}
+
+variable "iam_user_access_key" {
+  type        = string
+  description = "Access key of the IAM user."
+  default     = null
+}
+
+variable "iam_user_secret_key" {
+  type        = string
+  description = "Secret key of the IAM user."
+  default     = null
+  sensitive   = true
+}
