@@ -112,6 +112,7 @@ resource "sumologic_elb_source" "source" {
       type       = "S3BucketAuthentication"
       access_key = var.iam_user_access_key
       secret_key = var.iam_user_secret_key
+      region     = local.aws_region
     }
   }
 
